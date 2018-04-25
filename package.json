@@ -1,6 +1,6 @@
 {
 	"name": "travian-kingdoms-api",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "JS Api for communication with travian kingdoms public (!!) endpoints",
 	"main": "index.js",
 	"scripts": {
