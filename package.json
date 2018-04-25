@@ -1,25 +1,26 @@
 {
-  "name": "travian-kingdoms-api",
-  "version": "1.0.0",
-  "description": "JS Api for communication with travian kingdoms public (!!) endpoints",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JaLe29/travian-kingdoms-api.git"
-  },
-  "keywords": [
-    "travian",
-    "kingdoms",
-    "api",
-    "endpoint"
-  ],
-  "author": "JaLe",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/JaLe29/travian-kingdoms-api/issues"
-  },
-  "homepage": "https://github.com/JaLe29/travian-kingdoms-api#readme"
+	"name": "travian-kingdoms-api",
+	"version": "1.0.0",
+	"private": true,
+	"description": "JS Api for communication with travian kingdoms public (!!) endpoints",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JaLe29/travian-kingdoms-api.git"
+	},
+	"keywords": [
+		"travian",
+		"kingdoms",
+		"api",
+		"endpoint"
+	],
+	"author": "JaLe",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/JaLe29/travian-kingdoms-api/issues"
+	},
+	"homepage": "https://github.com/JaLe29/travian-kingdoms-api#readme"
 }
