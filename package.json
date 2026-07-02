@@ -1,6 +1,6 @@
 {
 	"name": "travian-kingdoms-api",
-	"version": "3.0.0",
+	"version": "1.0.0",
 	"description": "Modern, fully-typed JavaScript/TypeScript client for the Travian Kingdoms public API endpoints",
 	"keywords": [
 		"travian",
