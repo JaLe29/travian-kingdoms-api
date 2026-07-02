@@ -1,0 +1,46 @@
+name: Publish to npm
+
+# Publishes the package to the npm registry whenever a GitHub Release is
+# published. Create a release (with a tag such as `v2.0.0`) and this workflow
+# builds, tests and publishes the compiled package automatically.
+#
+# It can also be triggered manually from the Actions tab (workflow_dispatch).
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # required for npm provenance
+
+jobs:
+  publish:
+    name: Build & publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify (lint, type-check, test) & build
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run test:run
+          npm run build
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

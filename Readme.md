@@ -246,15 +246,29 @@ npm run typecheck  # type-check without emitting
 
 ### Publishing
 
-The package is published to the npm registry with the standard flow:
+Publishing to the npm registry is **automated** via GitHub Actions
+([`.github/workflows/publish.yml`](./.github/workflows/publish.yml)). To ship a
+new version:
 
-```sh
-npm version <patch|minor|major>
-npm publish
-```
+1. Bump the version and push the tag:
 
-`prepublishOnly` automatically cleans, lints, type-checks, tests and builds the
-package before it is published, so only the compiled `dist/` output ships.
+    ```sh
+    npm version <patch|minor|major>
+    git push --follow-tags
+    ```
+
+2. Create a **GitHub Release** for that tag (Releases → Draft a new release).
+   Publishing the release triggers the workflow, which lints, type-checks,
+   tests, builds and runs `npm publish --provenance` automatically.
+
+The workflow authenticates with an `NPM_TOKEN` repository secret
+(Settings → Secrets and variables → Actions). Create an
+[npm access token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
+with publish rights and store it there once.
+
+You can still publish manually if needed (`npm publish`); the `prepublishOnly`
+hook cleans, lints, type-checks, tests and builds the package first, so only the
+compiled `dist/` output ever ships.
 
 ## License
 
