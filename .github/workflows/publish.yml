@@ -4,6 +4,12 @@ name: Publish to npm
 # published. Create a release (with a tag such as `v2.0.0`) and this workflow
 # builds, tests and publishes the compiled package automatically.
 #
+# Authentication uses npm Trusted Publishing (OIDC) — there is NO long-lived
+# NPM_TOKEN to store or rotate. A short-lived, workflow-scoped token is minted
+# for each run. This requires a one-time setup on npmjs.com: on the package
+# page go to Settings → Trusted Publishers and add this repository and the
+# `publish.yml` workflow file.
+#
 # It can also be triggered manually from the Actions tab (workflow_dispatch).
 on:
   release:
@@ -12,7 +18,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write # required for npm provenance
+  id-token: write # required for npm Trusted Publishing (OIDC) and provenance
 
 jobs:
   publish:
@@ -30,6 +36,9 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: npm
 
+      - name: Upgrade npm (Trusted Publishing needs >= 11.5.1)
+        run: npm install -g npm@latest
+
       - name: Install dependencies
         run: npm ci
 
@@ -41,6 +50,4 @@ jobs:
           npm run build
 
       - name: Publish to npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public

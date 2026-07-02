@@ -259,12 +259,13 @@ new version:
 
 2. Create a **GitHub Release** for that tag (Releases → Draft a new release).
    Publishing the release triggers the workflow, which lints, type-checks,
-   tests, builds and runs `npm publish --provenance` automatically.
+   tests, builds and publishes the package (with provenance) automatically.
 
-The workflow authenticates with an `NPM_TOKEN` repository secret
-(Settings → Secrets and variables → Actions). Create an
-[npm access token](https://docs.npmjs.com/creating-and-viewing-access-tokens)
-with publish rights and store it there once.
+Authentication uses **npm Trusted Publishing (OIDC)** — there is no long-lived
+token to store or rotate; each run mints a short-lived, workflow-scoped
+credential. One-time setup on [npmjs.com](https://www.npmjs.com): open the
+package page → **Settings → Trusted Publishers**, choose GitHub Actions and
+enter this repository and the `publish.yml` workflow filename.
 
 You can still publish manually if needed (`npm publish`); the `prepublishOnly`
 hook cleans, lints, type-checks, tests and builds the package first, so only the
