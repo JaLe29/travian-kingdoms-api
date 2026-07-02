@@ -1,0 +1,91 @@
+name: Release
+
+# Cuts a new release entirely from GitHub Actions — no local `npm version`.
+# Trigger it manually from the Actions tab (Run workflow) and pick the bump
+# level. The workflow then:
+#   1. verifies (lint, type-check, test) and builds the package,
+#   2. bumps the version in package.json and creates the git tag,
+#   3. pushes the commit + tag back to the branch,
+#   4. publishes to npm via Trusted Publishing (OIDC — no token), and
+#   5. creates a GitHub Release with auto-generated notes.
+#
+# One-time npm setup: on the package page go to Settings → Trusted Publishers
+# and register this repository with the `release.yml` workflow filename.
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Semantic version bump to apply
+        type: choice
+        required: true
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+# Only one release may run at a time.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write # push the version commit/tag and create the GitHub Release
+  id-token: write # npm Trusted Publishing (OIDC) + provenance
+
+jobs:
+  release:
+    name: Bump, publish & release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Upgrade npm (Trusted Publishing needs >= 11.5.1)
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify (lint, type-check, test) & build
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run test:run
+          npm run build
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        id: bump
+        run: |
+          NEW_VERSION=$(npm version "${{ inputs.release_type }}" -m "release: %s")
+          echo "version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Bumped to ${NEW_VERSION}"
+
+      - name: Push commit & tag
+        run: git push --follow-tags origin "HEAD:${{ github.ref_name }}"
+
+      - name: Publish to npm
+        run: npm publish --access public
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.bump.outputs.version }}" \
+            --title "${{ steps.bump.outputs.version }}" \
+            --generate-notes

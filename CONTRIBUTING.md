@@ -21,26 +21,28 @@ and 22.
 
 ## Releasing
 
-Publishing to the npm registry is automated via GitHub Actions
-([`.github/workflows/publish.yml`](./.github/workflows/publish.yml)).
+Releases are cut entirely from GitHub Actions
+([`.github/workflows/release.yml`](./.github/workflows/release.yml)) — there is
+**no local `npm version` step**.
 
-1. Bump the version and push the tag:
+1. Go to the repository's **Actions** tab → **Release** → **Run workflow**.
+2. Pick the bump level (`patch`, `minor` or `major`) and run it.
 
-    ```sh
-    npm version <patch|minor|major>
-    git push --follow-tags
-    ```
-
-2. Create a **GitHub Release** for that tag (Releases → Draft a new release).
-   Publishing the release triggers the workflow, which lints, type-checks,
-   tests, builds and publishes the package (with provenance) automatically.
+The workflow then verifies (lint, type-check, test) and builds the package,
+bumps the version and creates the git tag, pushes the commit and tag back to
+the branch, publishes to npm, and opens a **GitHub Release** with
+auto-generated notes.
 
 Authentication uses **npm Trusted Publishing (OIDC)** — there is no long-lived
 token to store or rotate; each run mints a short-lived, workflow-scoped
 credential. This requires a one-time setup on
 [npmjs.com](https://www.npmjs.com): open the package page →
 **Settings → Trusted Publishers**, choose GitHub Actions and enter this
-repository together with the `publish.yml` workflow filename.
+repository together with the `release.yml` workflow filename.
+
+> **Note:** the workflow pushes the version commit directly to the branch. If
+> the default branch is protected, allow `github-actions[bot]` to bypass the
+> restriction (or relax the rule) so the push succeeds.
 
 You can still publish manually if needed (`npm publish`); the `prepublishOnly`
 hook cleans, lints, type-checks, tests and builds the package first, so only the
