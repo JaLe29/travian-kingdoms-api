@@ -1,25 +1,82 @@
 {
 	"name": "travian-kingdoms-api",
-	"version": "1.0.2",
-	"description": "JS Api for communication with travian kingdoms public (!!) endpoints",
-	"main": "index.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+	"version": "2.0.0",
+	"description": "Modern, fully-typed JavaScript/TypeScript client for the Travian Kingdoms public API endpoints",
+	"keywords": [
+		"travian",
+		"kingdoms",
+		"api",
+		"endpoint",
+		"typescript",
+		"client",
+		"map-data"
+	],
+	"homepage": "https://github.com/JaLe29/travian-kingdoms-api#readme",
+	"bugs": {
+		"url": "https://github.com/JaLe29/travian-kingdoms-api/issues"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/JaLe29/travian-kingdoms-api.git"
 	},
-	"keywords": [
-		"travian",
-		"kingdoms",
-		"api",
-		"endpoint"
-	],
-	"author": "JaLe",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/JaLe29/travian-kingdoms-api/issues"
+	"author": "JaLe",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
+		},
+		"./package.json": "./package.json"
 	},
-	"homepage": "https://github.com/JaLe29/travian-kingdoms-api#readme"
+	"files": [
+		"dist",
+		"Readme.md",
+		"LICENSE",
+		"CHANGELOG.md"
+	],
+	"scripts": {
+		"build": "tsup",
+		"clean": "rimraf dist coverage",
+		"dev": "tsup --watch",
+		"format": "prettier --write \"**/*.{ts,js,json,md}\"",
+		"format:check": "prettier --check \"**/*.{ts,js,json,md}\"",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"prepublishOnly": "npm run clean && npm run lint && npm run typecheck && npm run test:run && npm run build",
+		"test": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"test:run": "vitest run",
+		"typecheck": "tsc --noEmit"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.17.0",
+		"@types/node": "^22.10.2",
+		"@typescript-eslint/eslint-plugin": "^8.18.1",
+		"@typescript-eslint/parser": "^8.18.1",
+		"@vitest/coverage-v8": "^2.1.8",
+		"eslint": "^9.17.0",
+		"eslint-config-prettier": "^9.1.0",
+		"prettier": "^3.4.2",
+		"rimraf": "^6.0.1",
+		"tsup": "^8.3.5",
+		"typescript": "^5.7.2",
+		"typescript-eslint": "^8.18.1",
+		"vitest": "^2.1.8"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
 }
